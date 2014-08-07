@@ -59,39 +59,71 @@ public class PingArguments {
 			this.arguments = new PingArguments();
 		}
 
+		/**
+		 * Destination host to ping
+		 * @param url Host to ping
+		 * @return com.googlecode.jpingy.PingArguments.Builder
+		 */
 		public Builder url(String url) {
 			arguments.url = url;
 			return this;
 		}
 
+		/**
+		 * Number of ping requests to send
+		 * @param count Number of ping requests
+		 * @return com.googlecode.jpingy.PingArguments.Builder
+		 */
 		public Builder count(Integer count) {
 			arguments.count = count;
 			return this;
 		}
 
+		/**
+		 * Time to wait for a response, in milliseconds. 
+		 * Very important for UNIX users to recognize this value is milliseconds and not seconds.
+		 * @param timeout Time in milliseconds
+		 * @return com.googlecode.jpingy.PingArguments.Builder
+		 */
 		public Builder timeout(Long timeout) {
 			arguments.timeout = timeout;
 			return this;
 		}
 
+		/**
+		 * Specifies the number of data bytes to be sent. Default is 32 bytes for WINDOWS and 56 bytes for UNIX.
+		 * @param bytes Bytes value
+		 * @return com.googlecode.jpingy.PingArguments.Builder
+		 */
 		public Builder bytes(Integer bytes) {
 			arguments.payload_bytes = bytes;
 			return this;
 		}
 
+		/**
+		 * Set the IP Time-to-Live. 
+		 * The TTL (Time-To-Live) value of an IP packet represents the maximum number of IP routers that the packet can go through before being thrown away.
+		 * @param ttl Time-to-live value
+		 * @return com.googlecode.jpingy.PingArguments.Builder
+		 */
 		public Builder ttl(Integer ttl) {
 			arguments.ttl = ttl;
 			return this;
 		}
 		
+		/**
+		 * Output log level
+		 * @param loglevel Log level enum value
+		 * @return com.googlecode.jpingy.PingArguments.Builder
+		 */
 		public Builder loglevel(LogLevel loglevel) {
 			arguments.setLogLevel(loglevel);
 			return this;
 		}
 
 		/**
-		 * -i
-		 * @param interval
+		 * Wait interval between sending each packet in milliseconds.
+		 * @param interval Time interval
 		 * @return com.googlecode.jpingy.PingArguments.Builder
 		 */
 		public Builder interval(Long interval) {
@@ -99,6 +131,10 @@ public class PingArguments {
 			return this;
 		}
 
+		/**
+		 * Build the ping command with the provided arguments
+		 * @return com.googlecode.jpingy.PingArguments
+		 */
 		public PingArguments build() {
 			return arguments;
 		}
@@ -124,7 +160,7 @@ public class PingArguments {
 			if (interval != null)
 				builder.append(" ").append("-i").append("").append(interval);
 			if (timeout != null)
-				builder.append(" ").append("-W").append("").append(timeout);
+				builder.append(" ").append("-W").append(" ").append(timeout / 1000d);
 			if (ttl != null)
 				builder.append(" ").append("-t").append(" ").append(ttl);
 			if (payload_bytes != null)
@@ -145,6 +181,10 @@ public class PingArguments {
 			break;
 		}
 		
+		//Output command
+		if (loglevel.equals(LogLevel.VERBOSE))
+			System.out.println(builder.toString());
+			
 		return builder.toString();
 	}
 }

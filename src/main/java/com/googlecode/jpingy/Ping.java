@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.googlecode.jpingy.exceptions.BadLingerTimeException;
 import com.googlecode.jpingy.exceptions.GeneralFailureException;
 import com.googlecode.jpingy.exceptions.HostUnreachableException;
 import com.googlecode.jpingy.exceptions.InvalidHostException;
@@ -30,14 +31,28 @@ import com.googlecode.jpingy.exceptions.TimeToLiveExpiredException;
  */
 public class Ping {
 
+	/**
+	 * Sends ICMP ECHO_REQUEST packets to network hosts.
+	 * @param ping Ping arguments
+	 * @return com.googlecode.jpingy.PingResult
+	 * @throws HostUnreachableException
+	 * @throws GeneralFailureException
+	 * @throws InvalidHostException
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 * @throws TimeToLiveExpiredException
+	 * @throws BadLingerTimeException
+	 */
 	public static PingResult ping(PingArguments ping)
 			throws HostUnreachableException, GeneralFailureException,
-			InvalidHostException, IllegalArgumentException, IOException, TimeToLiveExpiredException {
+			InvalidHostException, IllegalArgumentException, IOException, TimeToLiveExpiredException, BadLingerTimeException {
 
-		Process p = Runtime.getRuntime().exec(ping.getCommand());
+		Process p = null;
 
-		BufferedReader stdInput = new BufferedReader(new InputStreamReader(
-				p.getInputStream()));
+		p = Runtime.getRuntime().exec(ping.getCommand());
+		
+		BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
 		List<String> lines = new ArrayList<String>();
 		String line;
@@ -46,7 +61,12 @@ public class Ping {
 			if (ping.getLogLevel().equals(LogLevel.VERBOSE))
 				System.out.println(line);
 		}
-
+		while ((line = stdError.readLine()) != null) {
+			lines.add(line);
+			if (ping.getLogLevel().equals(LogLevel.VERBOSE))
+				System.out.println(line);
+		}
+	
 		p.destroy();
 
 		return ping.getBackend().getResult(lines);

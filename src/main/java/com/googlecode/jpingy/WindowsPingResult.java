@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.googlecode.jpingy.PingRequest.PingRequestBuilder;
+import com.googlecode.jpingy.exceptions.BadLingerTimeException;
 import com.googlecode.jpingy.exceptions.GeneralFailureException;
 import com.googlecode.jpingy.exceptions.HostUnreachableException;
 import com.googlecode.jpingy.exceptions.InvalidHostException;
@@ -23,8 +24,8 @@ import com.googlecode.jpingy.exceptions.TimeToLiveExpiredException;
 
 /**
  * 
- * @author Thomas Goossens
- * @version 0.1a
+ * @author Austin Rappa
+ * @version 0.2
  * 
  */
 public class WindowsPingResult extends PingResult {
@@ -34,7 +35,7 @@ public class WindowsPingResult extends PingResult {
 
 	public WindowsPingResult(List<String> pingOutput)
 			throws HostUnreachableException, GeneralFailureException,
-			InvalidHostException, TimeToLiveExpiredException {
+			InvalidHostException, TimeToLiveExpiredException, BadLingerTimeException {
 		super(pingOutput);
 	}
 

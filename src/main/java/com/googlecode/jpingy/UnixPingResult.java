@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.googlecode.jpingy.PingRequest.PingRequestBuilder;
+import com.googlecode.jpingy.exceptions.BadLingerTimeException;
 import com.googlecode.jpingy.exceptions.GeneralFailureException;
 import com.googlecode.jpingy.exceptions.HostUnreachableException;
 import com.googlecode.jpingy.exceptions.InvalidHostException;
@@ -24,7 +25,7 @@ import com.googlecode.jpingy.exceptions.TimeToLiveExpiredException;
 /**
  * 
  * @author Thomas Goossens
- * @version 0.1a
+ * @version 0.2
  * 
  */
 public class UnixPingResult extends PingResult {
@@ -33,13 +34,13 @@ public class UnixPingResult extends PingResult {
 	private String[] rtt;
 
 	public UnixPingResult(List<String> pingOutput)
-			throws HostUnreachableException, GeneralFailureException, InvalidHostException, TimeToLiveExpiredException {
+			throws HostUnreachableException, GeneralFailureException, InvalidHostException, TimeToLiveExpiredException, BadLingerTimeException {
 		super(pingOutput);
 	}
 
 	@Override
 	protected void parsePingOutput(List<String> pingOutput)
-			throws HostUnreachableException, InvalidHostException, TimeToLiveExpiredException {
+			throws HostUnreachableException, InvalidHostException, TimeToLiveExpiredException, BadLingerTimeException {
 		this.validatePingOutput(pingOutput);
 		this.generatePackageArray(pingOutput);
 		this.generateRttArray(pingOutput);
@@ -51,9 +52,10 @@ public class UnixPingResult extends PingResult {
 	 * @throws HostUnreachableException
 	 * @throws InvalidHostException
 	 * @throws TimeToLiveExpiredException 
+	 * @throws BadLingerTimeException 
 	 */
 	private void validatePingOutput(List<String> pingOutput)
-			throws HostUnreachableException, InvalidHostException, TimeToLiveExpiredException {
+			throws HostUnreachableException, InvalidHostException, TimeToLiveExpiredException, BadLingerTimeException {
 		int i = 0;
 		while (i < pingOutput.size()) {
 			if (pingOutput.get(i).contains("Destination Host Prohibited")) {
@@ -64,6 +66,9 @@ public class UnixPingResult extends PingResult {
 			}
 			else if (pingOutput.get(i).contains("Time to live exceeded")) {
 				throw new TimeToLiveExpiredException();
+			}
+			else if (pingOutput.get(i).contains("bad linger time")) {
+				throw new BadLingerTimeException();
 			}
 			i++;
 		}

@@ -11,6 +11,7 @@ package com.googlecode.jpingy;
 
 import java.util.List;
 
+import com.googlecode.jpingy.exceptions.BadLingerTimeException;
 import com.googlecode.jpingy.exceptions.GeneralFailureException;
 import com.googlecode.jpingy.exceptions.HostUnreachableException;
 import com.googlecode.jpingy.exceptions.InvalidHostException;
@@ -19,13 +20,13 @@ import com.googlecode.jpingy.exceptions.TimeToLiveExpiredException;
 /**
  * 
  * @author Thomas Goossens
- * @version 0.1a
+ * @version 0.2
  * 
  */
 public abstract class PingResult {
 
 	protected abstract void parsePingOutput(List<String> pingOutput)
-			throws HostUnreachableException, GeneralFailureException, InvalidHostException, TimeToLiveExpiredException;
+			throws HostUnreachableException, GeneralFailureException, InvalidHostException, TimeToLiveExpiredException, BadLingerTimeException;
 
 	protected abstract int parsePayload();
 
@@ -73,9 +74,10 @@ public abstract class PingResult {
 	 * @throws HostUnreachableException
 	 * @throws GeneralFailureException 
 	 * @throws InvalidHostException 
+	 * @throws BadLingerTimeException 
 	 */
 	protected PingResult(List<String> pingOutput)
-			throws HostUnreachableException, GeneralFailureException, InvalidHostException, TimeToLiveExpiredException {
+			throws HostUnreachableException, GeneralFailureException, InvalidHostException, TimeToLiveExpiredException, BadLingerTimeException {
 		this.lines = pingOutput;
 		parsePingOutput(pingOutput);
 
